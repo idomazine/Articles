@@ -5,17 +5,19 @@
 //  Created by org on 2025/09/07.
 //
 
+import ComposableArchitecture
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+      NavigationView {
+        ArticlesListView(
+          store: Store(
+            initialState: ArticlesListReducer.State(),
+            reducer: { ArticlesListReducer() }
+          )
+        )
+      }
     }
 }
 

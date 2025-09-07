@@ -9,28 +9,45 @@ import ComposableArchitecture
 import Foundation
 import SwiftUI
 
+import SwiftUI
+import ComposableArchitecture
+
 struct ArticlesListView: View {
-  var store: StoreOf<ArticlesListReducer>
+  let store: StoreOf<ArticlesListReducer>
   
   var body: some View {
-    List(store.articles) { article in
-      VStack(alignment: .leading, spacing: 4) {
-        Text(article.title)
-          .font(.headline)
-        Text(article.body)
-          .font(.subheadline)
-          .foregroundColor(.secondary)
+    WithViewStore(store, observe: { $0 }) { viewStore in
+      Group {
+        if viewStore.isLoading {
+          ProgressView("読み込み中…")
+        } else if let message = viewStore.errorMessage {
+          VStack(spacing: 8) {
+            Text("読み込みに失敗しました")
+              .font(.headline)
+            Text(message)
+              .font(.footnote)
+              .foregroundColor(.secondary)
+          }
+          .padding(.top, 24)
+        } else {
+          List(viewStore.articles) { article in
+            VStack(alignment: .leading, spacing: 4) {
+              Text(article.title)
+                .font(.headline)
+              Text(article.body)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            }
+            .padding(.vertical, 4)
+          }
+        }
       }
-      .padding(.vertical, 4)
+      .navigationTitle("ニュース一覧")
+      .onAppear { viewStore.send(.onAppear) }
     }
-    .onAppear {
-      store.send(.onAppear)
-    }
-    .navigationTitle("ニュース一覧")
   }
 }
 
-// MARK: - Preview
 #Preview {
   NavigationView {
     ArticlesListView(

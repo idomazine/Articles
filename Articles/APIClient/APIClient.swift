@@ -17,7 +17,7 @@ struct ArticleAPIResponse: Identifiable, Sendable, Equatable {
 struct APIClient: Sendable {
   init() {}
   
-  var getBooks: @Sendable () async throws -> [ArticleAPIResponse] = {
+  var getArticles: @Sendable () async throws -> [ArticleAPIResponse] = {
     await SecondsTimer().wait(seconds: 1)
     return ArticleAPIResponse.sampleList
   }

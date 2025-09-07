@@ -10,6 +10,8 @@ import Foundation
 
 @Reducer
 struct ArticlesListReducer {
+  @Dependency(\.apiClient.getArticles) var getArticles
+  
   struct News: Identifiable, Equatable {
     var id: Int
     var title: String
@@ -18,21 +20,49 @@ struct ArticlesListReducer {
 
   @ObservableState
   struct State: Equatable {
+    var isLoading: Bool = false
+    var errorMessage: String? = nil
     var articles: [News] = []
   }
   
   enum Action {
     case onAppear
+    case loaded([ArticleAPIResponse])
+    case failed(String)
   }
   
   var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
       case .onAppear:
-        // ダミー10件を生成
-        state.articles = (1...10).map { i in
-          News(id: i, title: "ニュースタイトル \(i)", body: "ニュース本文 \(i)")
+        guard !state.isLoading else { return .none }
+        
+        state.isLoading = true
+        state.errorMessage = nil
+        
+        return .run { send in
+          do {
+            let items = try await getArticles()
+            await send(.loaded(items))
+          } catch {
+            await send(.failed(error.localizedDescription))
+          }
         }
+      case let .loaded(items):
+        state.isLoading = false
+        state.articles = items.map {
+          News(
+            id: $0.id,
+            title: $0.title,
+            body: $0.body
+          )
+        }
+        state.errorMessage = nil
+        return .none
+        
+      case let .failed(message):
+        state.isLoading = false
+        state.errorMessage = message
         return .none
       }
     }

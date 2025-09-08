@@ -18,6 +18,9 @@ struct ArticlesListView: View {
   var body: some View {
     WithViewStore(store, observe: { $0 }) { viewStore in
       Group {
+        if let content = store.scope(state: \.content, action: \.content) {
+          ArticlesListContentView(store: content)
+        }
         if viewStore.isLoading {
           ProgressView("読み込み中…")
         } else if let message = viewStore.errorMessage {
@@ -29,17 +32,6 @@ struct ArticlesListView: View {
               .foregroundColor(.secondary)
           }
           .padding(.top, 24)
-        } else {
-          List(viewStore.articles) { article in
-            VStack(alignment: .leading, spacing: 4) {
-              Text(article.title)
-                .font(.headline)
-              Text(article.body)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            }
-            .padding(.vertical, 4)
-          }
         }
       }
       .navigationTitle("ニュース一覧")

@@ -10,6 +10,7 @@ import Foundation
 
 @Reducer
 struct ArticlesListReducer {
+  typealias Content = ArticlesListContentReducer
   @Dependency(\.apiClient.getArticles) var getArticles
   
   struct News: Identifiable, Equatable {
@@ -22,13 +23,14 @@ struct ArticlesListReducer {
   struct State: Equatable {
     var isLoading: Bool = false
     var errorMessage: String? = nil
-    var articles: [News] = []
+    var content: Content.State? = nil
   }
   
   enum Action {
     case onAppear
     case loaded([ArticleAPIResponse])
     case failed(String)
+    case content(Content.Action)
   }
   
   var body: some ReducerOf<Self> {
@@ -50,13 +52,13 @@ struct ArticlesListReducer {
         }
       case let .loaded(items):
         state.isLoading = false
-        state.articles = items.map {
-          News(
+        state.content = Content.State(articles: items.map {
+          .init(
             id: $0.id,
             title: $0.title,
             body: $0.body
           )
-        }
+        })
         state.errorMessage = nil
         return .none
         
@@ -64,7 +66,12 @@ struct ArticlesListReducer {
         state.isLoading = false
         state.errorMessage = message
         return .none
+      case .content:
+        return .none
       }
+    }
+    .ifLet(\.content, action: \.content) {
+      Content()
     }
   }
 }

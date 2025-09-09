@@ -10,14 +10,11 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-      NavigationView {
-        ArticlesListView(
-          store: Store(
-            initialState: ArticlesListReducer.State(),
-            reducer: { ArticlesListReducer() }
-          )
-        )
-      }
+      RootTabView(
+        store: Store(initialState: .init()) {
+          RootTabReducer()
+        }
+      )
     }
 }
 

@@ -9,7 +9,7 @@ import Foundation
 import ComposableArchitecture
 
 @Reducer
-public struct LoadableReducer<Parameter: Sendable, Content: Reducer & Sendable>: Reducer, Sendable {
+public struct LoadableReducer<Parameter: Sendable, Content: Reducer>: Reducer {
   @ObservableState
   public struct State {
     @CasePathable

@@ -16,8 +16,6 @@ struct ArticlesListReducer {
 
   @ObservableState
   struct State {
-    var isLoading: Bool = false
-    var errorMessage: String? = nil
     var loadableContent: Loadable.State = .init(parameter: ())
   }
   

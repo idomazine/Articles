@@ -10,6 +10,7 @@ import ComposableArchitecture
 
 @Reducer
 public struct LoadableReducer<Parameter: Sendable, Content: Reducer & Sendable>: Reducer, Sendable {
+  @ObservableState
   public struct State {
     @CasePathable
     public enum LoadingStatus {
@@ -91,3 +92,9 @@ public struct LoadableReducer<Parameter: Sendable, Content: Reducer & Sendable>:
     }
   }
 }
+
+extension LoadableReducer.State.LoadingStatus: Equatable where Content.State: Equatable, Parameter: Equatable {}
+extension LoadableReducer.State: Equatable where Content.State: Equatable, Parameter: Equatable {}
+
+public typealias LoadableState<Parameter, Content> = LoadableReducer<Parameter, Content>.State where Content: Reducer
+public typealias LoadableAction<Parameter, Content> = LoadableReducer<Parameter, Content>.Action where Content: Reducer

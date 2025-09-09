@@ -16,27 +16,13 @@ struct ArticlesListView: View {
   let store: StoreOf<ArticlesListReducer>
   
   var body: some View {
-    WithViewStore(store, observe: { $0 }) { viewStore in
-      Group {
-        if let content = store.scope(state: \.content, action: \.content) {
-          ArticlesListContentView(store: content)
-        }
-        if viewStore.isLoading {
-          ProgressView("読み込み中…")
-        } else if let message = viewStore.errorMessage {
-          VStack(spacing: 8) {
-            Text("読み込みに失敗しました")
-              .font(.headline)
-            Text(message)
-              .font(.footnote)
-              .foregroundColor(.secondary)
-          }
-          .padding(.top, 24)
-        }
+    VStack {
+      LoadableView(store: store.scope(state: \.loadableContent,
+                                      action: \.loadableContent)) {
+        ArticlesListContentView(store: $0)
       }
-      .navigationTitle("ニュース一覧")
-      .onAppear { viewStore.send(.onAppear) }
     }
+    .navigationTitle("ニュース一覧")
   }
 }
 

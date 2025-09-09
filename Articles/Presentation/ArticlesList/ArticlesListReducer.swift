@@ -11,67 +11,44 @@ import Foundation
 @Reducer
 struct ArticlesListReducer {
   typealias Content = ArticlesListContentReducer
+  typealias Loadable = LoadableReducer<Void, Content>
   @Dependency(\.apiClient.getArticles) var getArticles
-  
-  struct News: Identifiable, Equatable {
-    var id: Int
-    var title: String
-    var body: String
-  }
 
   @ObservableState
-  struct State: Equatable {
+  struct State {
     var isLoading: Bool = false
     var errorMessage: String? = nil
-    var content: Content.State? = nil
+    var loadableContent: Loadable.State = .init(parameter: ())
   }
   
   enum Action {
-    case onAppear
-    case loaded([ArticleAPIResponse])
-    case failed(String)
-    case content(Content.Action)
+    case loadableContent(Loadable.Action)
   }
   
   var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
-      case .onAppear:
-        guard !state.isLoading else { return .none }
-        
-        state.isLoading = true
-        state.errorMessage = nil
-        
-        return .run { send in
-          do {
-            let items = try await getArticles()
-            await send(.loaded(items))
-          } catch {
-            await send(.failed(error.localizedDescription))
-          }
-        }
-      case let .loaded(items):
-        state.isLoading = false
-        state.content = Content.State(articles: items.map {
-          .init(
-            id: $0.id,
-            title: $0.title,
-            body: $0.body
-          )
-        })
-        state.errorMessage = nil
-        return .none
-        
-      case let .failed(message):
-        state.isLoading = false
-        state.errorMessage = message
-        return .none
-      case .content:
+      case .loadableContent:
         return .none
       }
     }
-    .ifLet(\.content, action: \.content) {
-      Content()
+    Scope(state: \.loadableContent,
+          action: \.loadableContent) {
+      Loadable(
+        loadTask: { _ in
+          let items = try await getArticles()
+          let state = Content.State(articles: items.map {
+            Content.News(
+              id: $0.id,
+              title: $0.title,
+              body: $0.body
+            )
+          })
+          return state
+        },
+        makeContent: {
+          Content()
+        })
     }
   }
 }

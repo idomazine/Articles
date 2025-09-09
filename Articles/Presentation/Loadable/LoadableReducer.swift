@@ -9,19 +9,20 @@ import Foundation
 import ComposableArchitecture
 
 @Reducer
-public struct LoadableReducer<Parameter: Sendable, Content: Sendable>: Reducer, Sendable {
+public struct LoadableReducer<Parameter: Sendable, Content: Reducer & Sendable>: Reducer, Sendable {
   public struct State {
     @CasePathable
     public enum LoadingStatus {
       case initial
       case loading
-      case success(Content)
+      case loaded
       case failure(String)
     }
     
     public let parameter: Parameter
     public var loadingStatus: LoadingStatus = .initial
-    
+    public var content: Content.State?
+
     public init(parameter: Parameter,
                 loadingStatus: LoadingStatus = .initial) {
       self.parameter = parameter
@@ -33,13 +34,19 @@ public struct LoadableReducer<Parameter: Sendable, Content: Sendable>: Reducer, 
   public enum Action {
     case task
     case reload
-    case response(Result<Content, Error>)
+    case response(Result<Content.State, Error>)
+    case content(Content.Action)
   }
   
-  public let loadTask: @Sendable (Parameter) async throws -> Content
-  
-  public init(loadTask: @Sendable @escaping (Parameter) async throws -> Content) {
+  public let loadTask: @Sendable (Parameter) async throws -> Content.State
+  public let makeContent: @Sendable () -> Content
+
+  public init(
+    loadTask: @Sendable @escaping (Parameter) async throws -> Content.State,
+    makeContent: @escaping @Sendable () -> Content
+  ) {
     self.loadTask = loadTask
+    self.makeContent = makeContent
   }
   
   public var body: some ReducerOf<Self> {
@@ -55,12 +62,19 @@ public struct LoadableReducer<Parameter: Sendable, Content: Sendable>: Reducer, 
       case .reload:
         return startLoading(state: &state)
       case let .response(.success(content)):
-        state.loadingStatus = .success(content)
+        state.loadingStatus = .loaded
+        state.content = content
         return .none
       case let .response(.failure(error)):
         state.loadingStatus = .failure(error.localizedDescription)
+        state.content = nil
+        return .none
+      case .content:
         return .none
       }
+    }
+    .ifLet(\.content, action: \.content) {
+      makeContent()
     }
   }
   

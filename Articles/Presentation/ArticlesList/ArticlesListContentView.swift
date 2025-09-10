@@ -9,11 +9,13 @@ import SwiftUI
 import ComposableArchitecture
 
 struct ArticlesListContentView: View {
-  let store: StoreOf<ArticlesListContentReducer>
+  @Bindable var store: StoreOf<ArticlesListContentReducer>
   
   var body: some View {
-    WithViewStore(store, observe: { $0 }) { viewStore in
-      List(viewStore.articles) { article in
+    List(store.articles) { article in
+      Button {
+        store.send(.didSelectArticleWithId(article.id))
+      } label: {
         VStack(alignment: .leading, spacing: 4) {
           Text(article.title)
             .font(.headline)
@@ -21,10 +23,14 @@ struct ArticlesListContentView: View {
             .font(.subheadline)
             .foregroundColor(.secondary)
         }
-        .padding(.vertical, 4)
       }
-      .navigationTitle("ニュース一覧")
-      .onAppear { viewStore.send(.onAppear) }
+    }
+    .padding(.vertical, 4)
+    .navigationTitle("ニュース一覧")
+    .onAppear { store.send(.onAppear) }
+    .navigationDestination(store: store.scope(state: \.$articleDetail,
+                                              action: \.articleDetail)) { store in
+      ArticleDetailView(store: store)
     }
   }
 }

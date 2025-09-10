@@ -9,11 +9,11 @@ import ComposableArchitecture
 import Foundation
 
 @Reducer
-public struct ArticleDetailReducer {
-  @Dependency(\.apiClient.getArticleWithId) private var getArticleWithId
+struct ArticleDetailReducer {
+  @Dependency(\.apiClient.getArticleWithId) var getArticleWithId
   
   @ObservableState
-  struct State: Equatable, Sendable {
+  struct State: Equatable, Sendable, Identifiable {
     let id: Int
     var isLoading: Bool = false
     var errorMessage: String?
@@ -31,9 +31,7 @@ public struct ArticleDetailReducer {
     case _response(TaskResult<ArticleAPIResponse>)
   }
   
-  public init() {}
-  
-  public var body: some ReducerOf<Self> {
+  var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
       case .onAppear, .reloadTapped:

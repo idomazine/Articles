@@ -19,10 +19,13 @@ struct ArticlesListContentReducer {
   @ObservableState
   struct State: Equatable {
     var articles: [News] = []
+    @Presents var articleDetail: ArticleDetailReducer.State? = nil
   }
   
   enum Action {
     case onAppear
+    case didSelectArticleWithId(Int)
+    case articleDetail(PresentationAction<ArticleDetailReducer.Action>)
   }
   
   var body: some ReducerOf<Self> {
@@ -30,7 +33,15 @@ struct ArticlesListContentReducer {
       switch action {
       case .onAppear:
         return .none
+      case let .didSelectArticleWithId(id):
+        state.articleDetail = .init(id: id)
+        return .none
+      case .articleDetail:
+        return .none
       }
+    }
+    .ifLet(\.$articleDetail, action: \.articleDetail) {
+      ArticleDetailReducer()
     }
   }
 }

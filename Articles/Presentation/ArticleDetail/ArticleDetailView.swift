@@ -16,7 +16,9 @@ struct ArticleDetailView: View {
   }
   
   var body: some View {
-    content
+    VStack {
+      content
+    }
       .navigationTitle("記事詳細")
       .toolbar {
         ToolbarItem(placement: .topBarTrailing) {
@@ -24,11 +26,14 @@ struct ArticleDetailView: View {
             .disabled(store.isLoading)
         }
       }
-      .task { store.send(.onAppear) }
+      .task {
+        print("onAppear")
+        store.send(.onAppear)
+      }
   }
   
   @ViewBuilder
-  private var content: some View {
+  var content: some View {
     if store.isLoading && store.article == nil {
       ProgressView("読み込み中…")
         .frame(maxWidth: .infinity, maxHeight: .infinity)

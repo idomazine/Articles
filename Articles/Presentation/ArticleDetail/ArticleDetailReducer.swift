@@ -10,48 +10,41 @@ import Foundation
 
 @Reducer
 struct ArticleDetailReducer {
+  typealias Content = ArticleDetailContentReducer
+  typealias Loadable = LoadableReducer<Int, Content>
   @Dependency(\.apiClient.getArticleWithId) var getArticleWithId
   
   @ObservableState
-  struct State: Equatable, Sendable, Identifiable {
-    let id: Int
-    var isLoading: Bool = false
-    var errorMessage: String?
-    var article: ArticleAPIResponse?
-
-    init(id: Int, article: ArticleAPIResponse? = nil) {
-      self.id = id
-      self.article = article
+  struct State {
+    var loadableContent: Loadable.State
+    
+    init(id: Int) {
+      loadableContent = .init(parameter: id)
     }
   }
   
-  enum Action: Sendable, Equatable {
-    case onAppear
-    case reloadTapped
-    case _response(TaskResult<ArticleAPIResponse>)
+  enum Action {
+    case loadableContent(Loadable.Action)
   }
   
   var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
-      case .onAppear, .reloadTapped:
-        state.isLoading = true
-        state.errorMessage = nil
-        let id = state.id
-        return .run { send in
-          await send(._response(TaskResult { try await getArticleWithId(id) }))
-        }
-        
-      case let ._response(.success(article)):
-        state.isLoading = false
-        state.article = article
-        return .none
-        
-      case let ._response(.failure(error)):
-        state.isLoading = false
-        state.errorMessage = (error as NSError).localizedDescription
+      case .loadableContent:
         return .none
       }
+    }
+    Scope(state: \.loadableContent,
+          action: \.loadableContent) {
+      Loadable(
+        loadTask: { id in
+          let article = try await getArticleWithId(id)
+          let state = Content.State(article: article)
+          return state
+        },
+        makeContent: {
+          Content()
+        })
     }
   }
 }

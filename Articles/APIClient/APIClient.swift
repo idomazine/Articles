@@ -15,12 +15,22 @@ struct ArticleAPIResponse: Identifiable, Sendable, Equatable {
   var backgroundColor: String
 }
 
+enum GetArticleDetailError: Error {
+  case notFound
+}
+
 struct APIClient: Sendable {
   init() {}
   
   var getArticles: @Sendable () async throws -> [ArticleAPIResponse] = {
     await SecondsTimer().wait(seconds: 1)
     return ArticleAPIResponse.sampleList
+  }
+  
+  var getArticleWithId: @Sendable (Int) async throws -> ArticleAPIResponse = { id in
+    await SecondsTimer().wait(seconds: 1)
+    guard let article = ArticleAPIResponse.sampleList.first(where: { $0.id == id }) else { throw GetArticleDetailError.notFound }
+    return article
   }
 }
 

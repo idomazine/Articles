@@ -35,6 +35,29 @@ struct ArticlesListReducerTests {
       $0.loadableContent.content?.articles[2].id = 103
     }
   }
+
+  @Test
+  @MainActor
+  func loadArticles_failure() async throws {
+    enum DummyError: Error, Equatable { case failed }
+    
+    let store = TestStore(initialState: ArticlesListReducer.State()) {
+      ArticlesListReducer()
+    }
+    
+    store.exhaustivity = .off
+    
+    store.dependencies.apiClient.getArticles = {
+      throw DummyError.failed
+    }
+    
+    await store.send(\.loadableContent.task) {
+      $0.loadableContent.loadingStatus = .loading
+    }
+    
+    await store.receive(\.loadableContent.response.failure)
+    #expect(store.state.loadableContent.loadingStatus.is(\.failure))
+  }
 }
 
 private extension ArticleAPIResponse {

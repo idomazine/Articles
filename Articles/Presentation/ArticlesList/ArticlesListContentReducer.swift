@@ -17,7 +17,7 @@ struct ArticlesListContentReducer {
   }
   
   @ObservableState
-  struct State {
+  struct State: Equatable {
     var articles: [News] = []
     @Presents var articleDetail: ArticleDetailReducer.State? = nil
   }

@@ -13,7 +13,7 @@ public struct LoadableReducer<Parameter: Sendable, Content: Reducer>: Reducer {
   @ObservableState
   public struct State {
     @CasePathable
-    public enum LoadingStatus {
+    public enum LoadingStatus: Equatable {
       case initial
       case loading
       case loaded
@@ -93,7 +93,6 @@ public struct LoadableReducer<Parameter: Sendable, Content: Reducer>: Reducer {
   }
 }
 
-extension LoadableReducer.State.LoadingStatus: Equatable where Content.State: Equatable, Parameter: Equatable {}
 extension LoadableReducer.State: Equatable where Content.State: Equatable, Parameter: Equatable {}
 
 public typealias LoadableState<Parameter, Content> = LoadableReducer<Parameter, Content>.State where Content: Reducer

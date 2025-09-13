@@ -15,7 +15,7 @@ struct ArticleDetailReducer {
   @Dependency(\.apiClient.getArticleWithId) var getArticleWithId
   
   @ObservableState
-  struct State {
+  struct State: Equatable {
     var loadableContent: Loadable.State
     
     init(id: Int) {

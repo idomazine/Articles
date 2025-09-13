@@ -11,12 +11,12 @@ import Foundation
 @Reducer
 struct ArticlesListReducer {
   typealias Content = ArticlesListContentReducer
-  typealias Loadable = LoadableReducer<Void, Content>
+  typealias Loadable = LoadableReducer<EquatableVoid, Content>
   @Dependency(\.apiClient.getArticles) var getArticles
 
   @ObservableState
-  struct State {
-    var loadableContent: Loadable.State = .init(parameter: ())
+  struct State: Equatable {
+    var loadableContent: Loadable.State = .init(parameter: .init())
   }
   
   enum Action {

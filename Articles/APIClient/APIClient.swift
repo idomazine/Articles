@@ -37,6 +37,8 @@ struct APIClient: Sendable {
 
 extension APIClient: DependencyKey {
   static let liveValue = APIClient()
+  
+  static var testValue: APIClient { liveValue }
 }
 
 extension DependencyValues {

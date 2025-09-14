@@ -13,10 +13,8 @@ struct ArticlesListContentView: View {
   
   var body: some View {
     List(store.articles) { article in
-      Button {
+      ArticleListElementView(article: article) {
         store.send(.didSelectArticleWithId(article.id))
-      } label: {
-        ArticleListElementView(article: article)
       }
     }
     .listStyle(.plain)

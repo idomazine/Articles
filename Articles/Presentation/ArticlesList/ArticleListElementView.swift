@@ -10,34 +10,39 @@ import SwiftUI
 
 struct ArticleListElementView: View {
   let article: ArticlesListContentReducer.Article
+  let onSelect: () -> Void
   
   var body: some View {
-    VStack(alignment: .leading) {
-      VStack {
-        Text(article.title)
-          .font(.headline)
-          .padding()
+    Button {
+      onSelect()
+    } label: {
+      VStack(alignment: .leading) {
+        VStack {
+          Text(article.title)
+            .font(.headline)
+            .padding()
+        }
+        .frame(maxWidth: .infinity,
+               minHeight: 88,
+               maxHeight: 88,
+               alignment: .leading)
+        .background(Color(hex: article.backgroundColor) ?? Color.blue.opacity(0.2))
+        Text(article.body)
+          .font(.subheadline)
+          .foregroundColor(.secondary)
+          .lineLimit(2)
+          .padding(.horizontal, 16)
+          .padding(.vertical, 4)
       }
-      .frame(maxWidth: .infinity,
-             minHeight: 88,
-             maxHeight: 88,
-             alignment: .leading)
-      .background(Color(hex: article.backgroundColor) ?? Color.blue.opacity(0.2))
-      Text(article.body)
-        .font(.subheadline)
-        .foregroundColor(.secondary)
-        .lineLimit(2)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 4)
+      .background(Color(.systemBackground))
+      .clipShape(RoundedRectangle(cornerRadius: 12,
+                                  style: .continuous))
+      .listRowInsets(EdgeInsets(top: 8,
+                                leading: 16,
+                                bottom: 8,
+                                trailing: 16))
+      .listRowSeparator(.hidden)
     }
-    .background(Color(.systemBackground))
-    .clipShape(RoundedRectangle(cornerRadius: 12,
-                                style: .continuous))
-    .listRowInsets(EdgeInsets(top: 8,
-                              leading: 16,
-                              bottom: 8,
-                              trailing: 16))
-    .listRowSeparator(.hidden)
   }
 }
 
@@ -53,7 +58,7 @@ struct ArticleListElementView: View {
         """,
       backgroundColor: "#FFAA00",
       tags: ["環境", "科学"]
-    ))
+    ), onSelect: { })
     .listRowBackground(Color.clear)
     .listRowSeparator(.hidden)
   }

@@ -14,6 +14,8 @@ struct ArticlesListContentReducer {
     var id: Int
     var title: String
     var body: String
+    var backgroundColor: String
+    var tags: [String]
   }
   
   @ObservableState

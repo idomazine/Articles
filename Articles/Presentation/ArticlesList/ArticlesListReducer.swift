@@ -39,7 +39,9 @@ struct ArticlesListReducer {
             Content.News(
               id: $0.id,
               title: $0.title,
-              body: $0.body
+              body: $0.body,
+              backgroundColor: $0.backgroundColor,
+              tags: $0.tags
             )
           })
           return state

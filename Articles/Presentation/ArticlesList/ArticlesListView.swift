@@ -16,13 +16,11 @@ struct ArticlesListView: View {
   let store: StoreOf<ArticlesListReducer>
   
   var body: some View {
-    VStack {
-      LoadableView(store: store.scope(state: \.loadableContent,
-                                      action: \.loadableContent)) {
-        ArticlesListContentView(store: $0)
-      }
+    LoadableView(store: store.scope(state: \.loadableContent,
+                                    action: \.loadableContent)) {
+      ArticlesListContentView(store: $0)
     }
-    .navigationTitle("ニュース一覧")
+                                    .navigationTitle("ニュース一覧")
   }
 }
 

@@ -31,8 +31,6 @@ struct ArticlesListContentView: View {
         }
       }
     }
-    .padding(.vertical, 4)
-    .navigationTitle("ニュース一覧")
     .onAppear { store.send(.onAppear) }
     .navigationDestination(store: store.scope(state: \.$articleDetail,
                                               action: \.articleDetail)) { store in

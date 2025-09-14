@@ -19,6 +19,7 @@ struct ArticlesListContentView: View {
         ArticleListElementView(article: article)
       }
     }
+    .listStyle(.plain)
     .onAppear { store.send(.onAppear) }
     .navigationDestination(store: store.scope(state: \.$articleDetail,
                                               action: \.articleDetail)) { store in

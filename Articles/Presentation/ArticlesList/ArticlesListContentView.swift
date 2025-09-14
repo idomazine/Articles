@@ -13,13 +13,8 @@ struct ArticlesListContentView: View {
   
   var body: some View {
     List(store.articles) { article in
-      NavigationLink {
-        ArticleDetailView(
-          store: Store(
-            initialState: ArticleDetailReducer.State(id: article.id),
-            reducer: { ArticleDetailReducer() }
-          )
-        )
+      Button {
+        store.send(.didSelectArticleWithId(article.id))
       } label: {
         VStack(alignment: .leading, spacing: 4) {
           Text(article.title)
@@ -27,7 +22,7 @@ struct ArticlesListContentView: View {
           Text(article.body)
             .font(.subheadline)
             .foregroundColor(.secondary)
-            .lineLimit(1) // 1行プレビューにしたい場合
+            .lineLimit(1)
         }
       }
     }

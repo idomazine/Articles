@@ -33,16 +33,17 @@ struct ArticleListElementView: View {
           .lineLimit(2)
           .padding(.horizontal, 16)
           .padding(.vertical, 4)
+          .background(Color(.clear))
       }
-      .background(Color(.systemBackground))
       .clipShape(RoundedRectangle(cornerRadius: 12,
                                   style: .continuous))
-      .listRowInsets(EdgeInsets(top: 8,
-                                leading: 16,
-                                bottom: 8,
-                                trailing: 16))
-      .listRowSeparator(.hidden)
     }
+    .buttonStyle(CardButtonStyle())
+    .listRowInsets(EdgeInsets(top: 8,
+                              leading: 16,
+                              bottom: 8,
+                              trailing: 16))
+    .listRowSeparator(.hidden)
   }
 }
 
@@ -63,4 +64,17 @@ struct ArticleListElementView: View {
     .listRowSeparator(.hidden)
   }
   .listStyle(.plain)
+}
+
+struct CardButtonStyle: ButtonStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label
+      .background(
+        RoundedRectangle(cornerRadius: 12, style: .continuous)
+          .fill(configuration.isPressed ? Color.gray.opacity(0.2)
+                : Color(.systemBackground))
+          .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+      )
+      .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
+  }
 }

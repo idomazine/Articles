@@ -47,5 +47,14 @@ struct ArticleDetailContentView: View {
     .onAppear {
       store.send(.onAppear)
     }
+    .toolbar {
+      ToolbarItem(placement: .navigationBarTrailing) {
+        Button {
+          store.send(.favoriteButtonTapped)
+        } label: {
+          Image(systemName: store.isFavorite ? "star.fill" : "star")
+        }
+      }
+    }
   }
 }

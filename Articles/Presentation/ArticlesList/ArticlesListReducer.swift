@@ -36,7 +36,7 @@ struct ArticlesListReducer {
         loadTask: { _ in
           let items = try await getArticles()
           let state = Content.State(articles: items.map {
-            Content.News(
+            Content.Article(
               id: $0.id,
               title: $0.title,
               body: $0.body,

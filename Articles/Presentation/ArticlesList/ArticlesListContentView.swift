@@ -16,14 +16,7 @@ struct ArticlesListContentView: View {
       Button {
         store.send(.didSelectArticleWithId(article.id))
       } label: {
-        VStack(alignment: .leading, spacing: 4) {
-          Text(article.title)
-            .font(.headline)
-          Text(article.body)
-            .font(.subheadline)
-            .foregroundColor(.secondary)
-            .lineLimit(1)
-        }
+        ArticleListElementView(article: article)
       }
     }
     .onAppear { store.send(.onAppear) }

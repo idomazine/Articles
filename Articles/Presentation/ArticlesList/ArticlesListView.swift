@@ -20,6 +20,7 @@ struct ArticlesListView: View {
                                     action: \.loadableContent)) {
       ArticlesListContentView(store: $0)
     }
+                                    .navigationBarTitleDisplayMode(.inline)
                                     .navigationTitle("ニュース一覧")
   }
 }

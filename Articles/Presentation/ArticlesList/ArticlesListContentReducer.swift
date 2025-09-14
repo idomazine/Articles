@@ -10,7 +10,7 @@ import ComposableArchitecture
 
 @Reducer
 struct ArticlesListContentReducer {
-  struct News: Identifiable, Equatable {
+  struct Article: Identifiable, Equatable {
     var id: Int
     var title: String
     var body: String
@@ -20,7 +20,7 @@ struct ArticlesListContentReducer {
   
   @ObservableState
   struct State: Equatable {
-    var articles: [News] = []
+    var articles: [Article] = []
     @Presents var articleDetail: ArticleDetailReducer.State? = nil
   }
   

@@ -12,21 +12,31 @@ struct ArticleListElementView: View {
   let article: ArticlesListContentReducer.Article
   
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text(article.title)
-        .font(.headline)
+    VStack(alignment: .leading) {
+      VStack {
+        Text(article.title)
+          .font(.headline)
+          .padding()
+      }
+      .frame(maxWidth: .infinity,
+             minHeight: 88,
+             maxHeight: 88,
+             alignment: .leading)
+      .background(Color(hex: article.backgroundColor) ?? Color.blue.opacity(0.2))
       Text(article.body)
         .font(.subheadline)
         .foregroundColor(.secondary)
-        .lineLimit(1)
+        .lineLimit(2)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 4)
     }
-    .padding()
-    .background(
-      RoundedRectangle(cornerRadius: 12, style: .continuous)
-        .fill(Color(.systemBackground))
-        .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
-    )
-    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+    .background(Color(.systemBackground))
+    .clipShape(RoundedRectangle(cornerRadius: 12,
+                                style: .continuous))
+    .listRowInsets(EdgeInsets(top: 8,
+                              leading: 16,
+                              bottom: 8,
+                              trailing: 16))
     .listRowSeparator(.hidden)
   }
 }

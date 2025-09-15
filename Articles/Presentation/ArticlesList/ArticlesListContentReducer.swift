@@ -26,7 +26,7 @@ struct ArticlesListContentReducer {
   
   enum Action {
     case onAppear
-    case didSelectArticleWithId(Int)
+    case didSelectArticle(id: Int)
     case articleDetail(PresentationAction<ArticleDetailReducer.Action>)
   }
   
@@ -35,7 +35,7 @@ struct ArticlesListContentReducer {
       switch action {
       case .onAppear:
         return .none
-      case let .didSelectArticleWithId(id):
+      case let .didSelectArticle(id):
         state.articleDetail = .init(id: id)
         return .none
       case .articleDetail:

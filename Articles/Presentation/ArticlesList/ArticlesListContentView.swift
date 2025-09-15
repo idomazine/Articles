@@ -14,7 +14,7 @@ struct ArticlesListContentView: View {
   var body: some View {
     List(store.articles) { article in
       ArticleListElementView(article: article) {
-        store.send(.didSelectArticleWithId(article.id))
+        store.send(.didSelectArticle(id: article.id))
       }
     }
     .listStyle(.plain)

@@ -14,7 +14,11 @@ struct FavoritesListView: View {
   var body: some View {
     List {
       ForEach(store.favorites) { favorite in
-        Text(favorite.title)
+        Button {
+          store.send(.didSelectArticle(id: favorite.id))
+        } label: {
+          Text(favorite.title)
+        }
       }
       .onDelete {
         $0.forEach {
@@ -24,6 +28,10 @@ struct FavoritesListView: View {
     }
     .onAppear { store.send(.onAppear) }
     .navigationTitle("お気に入り")
+    .navigationDestination(store: store.scope(state: \.$articleDetail,
+                                              action: \.articleDetail)) { store in
+      ArticleDetailView(store: store)
+    }
   }
 }
 

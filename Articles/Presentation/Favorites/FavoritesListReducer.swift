@@ -20,6 +20,7 @@ struct FavoritesListReducer {
   @ObservableState
   struct State {
     var favorites: [Favorite] = []
+    @Presents var articleDetail: ArticleDetailReducer.State? = nil
   }
   
   @CasePathable
@@ -27,6 +28,8 @@ struct FavoritesListReducer {
     case onAppear
     case updateFavoirets([Favorite])
     case deleteFavorite(id: Int)
+    case didSelectArticle(id: Int)
+    case articleDetail(PresentationAction<ArticleDetailReducer.Action>)
   }
   
   private enum CancelID {
@@ -57,7 +60,15 @@ struct FavoritesListReducer {
         catch {
           return .none
         }
+      case let .didSelectArticle(id):
+        state.articleDetail = ArticleDetailReducer.State(id: id)
+        return .none
+      case .articleDetail:
+        return .none
       }
+    }
+    .ifLet(\.$articleDetail, action: \.articleDetail) {
+      ArticleDetailReducer()
     }
   }
 }

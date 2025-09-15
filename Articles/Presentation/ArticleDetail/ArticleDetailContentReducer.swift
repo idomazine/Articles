@@ -10,7 +10,7 @@ import ComposableArchitecture
 
 @Reducer
 struct ArticleDetailContentReducer {
-  @Dependency(\.favoireRepository) var favoireRepository
+  @Dependency(\.favoriteRepository) var favoireRepository
   
   @ObservableState
   struct State: Equatable, Sendable {

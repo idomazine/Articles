@@ -10,20 +10,26 @@ import Dependencies
 import SwiftData
 
 struct ModelContextFactory {
-  var make: () throws -> ModelContext = {
-    try ModelContext(ModelContainer(
-      for:
-        Favorite.self
-      ,
-      configurations: .init()
-    ))
-  }
+  var make: () throws -> ModelContext
 }
 
 extension ModelContextFactory: DependencyKey {
-  static let liveValue = ModelContextFactory()
+  static let liveValue: ModelContextFactory = {
+    ModelContextFactory(
+      make: {
+        try makeModelContext(configuration: .init())
+      }
+    )
+  }()
   
-  static var testValue: ModelContextFactory { liveValue }
+  static var testValue: ModelContextFactory {
+    let modelContext = try! makeModelContext(configuration: .init(isStoredInMemoryOnly: true))
+    return ModelContextFactory(
+      make: {
+        modelContext
+      }
+    )
+  }
 }
 
 extension DependencyValues {
@@ -31,4 +37,13 @@ extension DependencyValues {
     get { self[ModelContextFactory.self] }
     set { self[ModelContextFactory.self] = newValue }
   }
+}
+
+private func makeModelContext(configuration: ModelConfiguration) throws -> ModelContext {
+  try ModelContext(ModelContainer(
+    for:
+      Favorite.self
+    ,
+    configurations: configuration
+  ))
 }

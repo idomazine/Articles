@@ -21,12 +21,44 @@ struct ArticleDetailContentReducerTests {
       ArticleDetailContentReducer()
     }
     
+    await store.send(.onAppear) 
+
     await store.send(.favoriteButtonTapped) { state in
       state.isFavorite = true
     }
     
     await store.send(.favoriteButtonTapped) { state in
       state.isFavorite = false
+    }
+  }
+
+  @Test
+  @MainActor
+  func favorite_tap_toggle_already_favorite() async {
+    @Dependency(\.favoriteRepository) var favoriteRepository
+    
+    try! favoriteRepository.addFavorite(.init(
+      articleId: 101,
+      title: "Swift Concurrency実践ガイド",
+      createdAt: Date()
+    ))
+    
+    let store = TestStore(initialState: ArticleDetailContentReducer.State(article: .sample)) {
+      ArticleDetailContentReducer()
+    } withDependencies: {
+      $0.favoriteRepository = favoriteRepository
+    }
+    
+    await store.send(.onAppear) { state in
+      state.isFavorite = true
+    }
+
+    await store.send(.favoriteButtonTapped) { state in
+      state.isFavorite = false
+    }
+    
+    await store.send(.favoriteButtonTapped) { state in
+      state.isFavorite = true
     }
   }
 }

@@ -65,7 +65,7 @@ extension FavoireRepository: DependencyKey {
 }
 
 extension DependencyValues {
-  var favoireRepository: FavoireRepository {
+  var favoriteRepository: FavoireRepository {
     get { self[FavoireRepository.self] }
     set { self[FavoireRepository.self] = newValue }
   }

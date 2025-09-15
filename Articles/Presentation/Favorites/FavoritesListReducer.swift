@@ -27,6 +27,7 @@ struct FavoritesListReducer {
     case onAppear
     case onDisappear
     case updateFavoirets([Favorite])
+    case deleteFavorite(id: Int)
   }
   
   private enum CancelID {
@@ -59,8 +60,15 @@ struct FavoritesListReducer {
       case let .updateFavoirets(favorites):
         state.favorites = favorites
         return .none
+      case let .deleteFavorite(id):
+        do {
+          try favoireRepository.removeFavoriteById(id)
+          return .none
+        }
+        catch {
+          return .none
+        }
       }
-        
     }
   }
 }

@@ -12,8 +12,15 @@ struct FavoritesListView: View {
   @Bindable var store: StoreOf<FavoritesListReducer>
   
   var body: some View {
-    List(store.favorites) { article in
-      Text(article.title)
+    List {
+      ForEach(store.favorites) { favorite in
+        Text(favorite.title)
+      }
+      .onDelete {
+        $0.forEach {
+          store.send(.deleteFavorite(id: store.favorites[$0].id))
+        }
+      }
     }
     .onAppear { store.send(.onAppear) }
     .onDisappear { store.send(.onDisappear) }

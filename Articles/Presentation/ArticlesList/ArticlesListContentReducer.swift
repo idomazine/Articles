@@ -47,7 +47,8 @@ struct ArticlesListContentReducer {
       case .articleDetail:
         return .none
       case .reachLastArticles:
-        if let nextPage = state.nextPage {
+        if let nextPage = state.nextPage,
+           !state.isLoadingNextPage {
           state.isLoadingNextPage = true
           return .run { send in
             do {
@@ -61,6 +62,7 @@ struct ArticlesListContentReducer {
           return .none
         }
       case let .nextPageRequestResponse(result):
+        state.isLoadingNextPage = false
         switch result {
         case let .success(response):
           state.articles.append(contentsOf: response.articles.map {

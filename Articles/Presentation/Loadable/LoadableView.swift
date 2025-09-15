@@ -17,12 +17,17 @@ struct LoadableView<Parameter: Sendable, Content: Reducer, ContentView: View>: V
   var body: some View {
     VStack {
       switch store.state.loadingStatus {
-      case .initial, .loading:
-        ProgressView("Loading...")
-      case .loaded:
+      case .initial:
+        progressView()
+      case .loaded, .loading:
         if let content = store.scope(state: \.content,
                                      action: \.content) {
           contentBody(content)
+            .refreshable {
+              await store.send(.refresh).finish()
+            }
+        } else if store.state.loadingStatus == .loading {
+          progressView()
         } else {
           EmptyView()
         }
@@ -39,5 +44,9 @@ struct LoadableView<Parameter: Sendable, Content: Reducer, ContentView: View>: V
     .task {
       store.send(.task)
     }
+  }
+  
+  private func progressView() -> some View {
+    ProgressView("Loading...")
   }
 }

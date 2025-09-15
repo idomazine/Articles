@@ -35,6 +35,7 @@ public struct LoadableReducer<Parameter: Sendable, Content: Reducer>: Reducer {
   public enum Action {
     case task
     case reload
+    case refresh
     case response(Result<Content.State, Error>)
     case content(Content.Action)
   }
@@ -61,6 +62,8 @@ public struct LoadableReducer<Parameter: Sendable, Content: Reducer>: Reducer {
           return .none
         }
       case .reload:
+        return startLoading(state: &state)
+      case .refresh:
         return startLoading(state: &state)
       case let .response(.success(content)):
         state.loadingStatus = .loaded

@@ -11,6 +11,7 @@ import SwiftData
 
 struct FavoireRepository {
   var getFavoriteById: (Int) throws -> Favorite?
+  var getAll: () throws -> AsyncThrowingStream<[Favorite], Error>
   var addFavorite: (Favorite) throws -> Void
   var removeFavoriteById: (Int) throws -> Void
 }
@@ -28,6 +29,10 @@ extension FavoireRepository: DependencyKey {
         fetch.fetchLimit = 1
         
         return try context.fetch(fetch).first
+      },
+      getAll: {
+        let context = try makeModelContext()
+        return makeAsyncStream(for: context)
       },
       addFavorite: { favorite in
         let context = try makeModelContext()
@@ -68,5 +73,27 @@ extension DependencyValues {
   var favoriteRepository: FavoireRepository {
     get { self[FavoireRepository.self] }
     set { self[FavoireRepository.self] = newValue }
+  }
+}
+
+private func makeAsyncStream(for context: ModelContext) -> AsyncThrowingStream<[Favorite], Error> {
+  AsyncThrowingStream<[Favorite], Error> { continuation in
+    let token = NotificationCenter.default.addObserver(
+      forName: ModelContext.didSave,
+      object: context,
+      queue: .main
+    ) { _ in
+      
+      do {
+        let favorites = try context.fetch(FetchDescriptor<Favorite>()).map { $0 }
+        continuation.yield(favorites)
+      } catch {
+        continuation.finish(throwing: error)
+      }
+    }
+    
+    continuation.onTermination = { _ in
+      NotificationCenter.default.removeObserver(token)
+    }
   }
 }

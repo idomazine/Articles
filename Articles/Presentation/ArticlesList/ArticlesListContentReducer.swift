@@ -21,6 +21,7 @@ struct ArticlesListContentReducer {
   @ObservableState
   struct State: Equatable {
     var articles: [Article] = []
+    var nextPage: Int? = nil
     @Presents var articleDetail: ArticleDetailReducer.State? = nil
   }
   

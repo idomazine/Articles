@@ -22,7 +22,7 @@ struct ArticlesListContentReducerTests {
     
     store.exhaustivity = .off
     
-    await store.send(.didSelectArticleWithId(1)) {
+    await store.send(.didSelectArticle(id: 1)) {
       $0.articleDetail = ArticleDetailReducer.State(id: 1)
     }
   }

@@ -8,6 +8,11 @@
 import Dependencies
 import Foundation
 
+struct ArticlesListAPIResponse {
+  var articles: [ArticleAPIResponse]
+  var nextPage: Int?
+}
+
 struct ArticleAPIResponse: Identifiable, Sendable, Equatable {
   var id: Int
   var title: String
@@ -23,9 +28,13 @@ enum GetArticleDetailError: Error {
 struct APIClient: Sendable {
   init() {}
   
-  var getArticles: @Sendable () async throws -> [ArticleAPIResponse] = {
+  var getArticlesWithPage: @Sendable (Int?) async throws -> ArticlesListAPIResponse = { page in
     await SecondsTimer().wait(seconds: 1)
-    return ArticleAPIResponse.sampleList
+    let page = page ?? 0
+    let pageSplited = ArticleAPIResponse.sampleList.split(subSize: 10)
+    guard pageSplited.count >= page else { return .init(articles: [], nextPage: nil) }
+    let nextPage = page + 1 < pageSplited.count ? page + 1 : nil
+    return .init(articles: pageSplited[page], nextPage: nextPage)
   }
   
   var getArticleWithId: @Sendable (Int) async throws -> ArticleAPIResponse = { id in
@@ -382,5 +391,13 @@ private extension ArticleAPIResponse {
         tags: ["文化・芸術", "地域社会"]
       )
     ]
+  }
+}
+
+extension Array {
+  func split(subSize: Int) -> [[Element]] {
+    stride(from: 0, to: count, by: subSize).map {
+      Array(self[$0..<Swift.min($0 + subSize, count)])
+    }
   }
 }

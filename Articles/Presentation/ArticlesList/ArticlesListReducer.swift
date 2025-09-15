@@ -12,7 +12,7 @@ import Foundation
 struct ArticlesListReducer {
   typealias Content = ArticlesListContentReducer
   typealias Loadable = LoadableReducer<EquatableVoid, Content>
-  @Dependency(\.apiClient.getArticles) var getArticles
+  @Dependency(\.apiClient.getArticlesWithPage) var getArticlesWithPage
 
   @ObservableState
   struct State: Equatable {
@@ -34,8 +34,8 @@ struct ArticlesListReducer {
           action: \.loadableContent) {
       Loadable(
         loadTask: { _ in
-          let items = try await getArticles()
-          let state = Content.State(articles: items.map {
+          let list = try await getArticlesWithPage(nil)
+          let state = Content.State(articles: list.articles.map {
             Content.Article(
               id: $0.id,
               title: $0.title,
@@ -43,7 +43,8 @@ struct ArticlesListReducer {
               backgroundColor: $0.backgroundColor,
               tags: $0.tags
             )
-          })
+          },
+                                    nextPage: list.nextPage)
           return state
         },
         makeContent: {

@@ -78,20 +78,27 @@ extension DependencyValues {
 
 private func makeAsyncStream(for context: ModelContext) -> AsyncThrowingStream<[Favorite], Error> {
   AsyncThrowingStream<[Favorite], Error> { continuation in
+    do {
+      let favorites = try context.fetch(FetchDescriptor<Favorite>()).map { $0 }
+      continuation.yield(favorites)
+    } catch {
+      continuation.finish(throwing: error)
+    }
+    
     let token = NotificationCenter.default.addObserver(
       forName: ModelContext.didSave,
       object: context,
       queue: .main
     ) { _ in
-      
       do {
         let favorites = try context.fetch(FetchDescriptor<Favorite>()).map { $0 }
+        print(favorites)
         continuation.yield(favorites)
       } catch {
         continuation.finish(throwing: error)
       }
     }
-    
+
     continuation.onTermination = { _ in
       NotificationCenter.default.removeObserver(token)
     }

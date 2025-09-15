@@ -20,7 +20,14 @@ struct RootTabView: View {
       .tabItem {
         Label("ニュース", systemImage: "book.closed")
       }
-      .tag(RootTabReducer.Tab.books)
+      NavigationStack {
+        FavoritesListView(store: store.scope(state: \.favoritesList,
+                                             action: \.favoritesList))
+      }
+      .tabItem {
+        Label("お気に入り", systemImage: "star")
+      }
+      .tag(RootTabReducer.Tab.favoritesList)
       
       NavigationStack {
         ProfileView(store: store.scope(state: \.profile,

@@ -12,6 +12,7 @@ import ComposableArchitecture
 struct RootTabReducer {
   enum Tab: Equatable {
     case books
+    case favoritesList
     case profile
   }
   
@@ -19,6 +20,7 @@ struct RootTabReducer {
   struct State {
     var selectedTab: Tab = .books
     var articles = ArticlesListReducer.State()
+    var favoritesList = FavoritesListReducer.State()
     var profile = ProfileReducer.State()
   }
   
@@ -26,6 +28,7 @@ struct RootTabReducer {
   enum Action {
     case selectTab(Tab)
     case articles(ArticlesListReducer.Action)
+    case favoritesList(FavoritesListReducer.Action)
     case profile(ProfileReducer.Action)
   }
   
@@ -33,6 +36,10 @@ struct RootTabReducer {
     Scope(state: \.articles,
           action: \.articles) {
       ArticlesListReducer()
+    }
+    Scope(state: \.favoritesList,
+          action: \.favoritesList) {
+      FavoritesListReducer()
     }
     Scope(state: \.profile,
           action: \.profile) {
@@ -44,6 +51,8 @@ struct RootTabReducer {
         state.selectedTab = selectedTab
         return .none
       case .articles:
+        return .none
+      case .favoritesList:
         return .none
       case .profile:
         return .none

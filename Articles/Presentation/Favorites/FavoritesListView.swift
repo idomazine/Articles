@@ -23,7 +23,6 @@ struct FavoritesListView: View {
       }
     }
     .onAppear { store.send(.onAppear) }
-    .onDisappear { store.send(.onDisappear) }
     .navigationTitle("お気に入り")
   }
 }

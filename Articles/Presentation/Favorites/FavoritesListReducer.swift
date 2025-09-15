@@ -25,7 +25,6 @@ struct FavoritesListReducer {
   @CasePathable
   enum Action {
     case onAppear
-    case onDisappear
     case updateFavoirets([Favorite])
     case deleteFavorite(id: Int)
   }
@@ -38,31 +37,21 @@ struct FavoritesListReducer {
     Reduce { state, action in
       switch action {
       case .onAppear:
-        return .run { send in
-          do {
-            let getFavorites = try favoireRepository.getAll()
-            for try await favoritesUpdated in getFavorites {
-              let favorites = favoritesUpdated
-                .sorted { $0.createdAt < $1.createdAt }
-                .map {
-                  Favorite(id: $0.articleId,
-                           title: $0.title)
-                }
-              await send(.updateFavoirets(favorites))
-            }
-          } catch {
-            print(error)
+        state.favorites = try! favoireRepository.getAll()
+          .map {
+            Favorite(id: $0.articleId,
+                     title: $0.title)
           }
-        }
-        .cancellable(id: CancelID.updateFavoirets, cancelInFlight: true)
-      case .onDisappear:
-        return .cancel(id: CancelID.updateFavoirets)
+        return .none
       case let .updateFavoirets(favorites):
         state.favorites = favorites
         return .none
       case let .deleteFavorite(id):
         do {
           try favoireRepository.removeFavoriteById(id)
+          state.favorites.removeAll {
+            $0.id == id
+          }
           return .none
         }
         catch {

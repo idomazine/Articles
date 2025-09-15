@@ -22,6 +22,7 @@ struct ArticlesListContentReducer {
   struct State: Equatable {
     var articles: [Article] = []
     var nextPage: Int? = nil
+    var isLoadingNextPage: Bool = false
     @Presents var articleDetail: ArticleDetailReducer.State? = nil
   }
   
@@ -30,6 +31,7 @@ struct ArticlesListContentReducer {
     case didSelectArticle(id: Int)
     case articleDetail(PresentationAction<ArticleDetailReducer.Action>)
     case reachLastArticles
+    case nextPageRequestResponse(Result<ArticlesListAPIResponse, Error>)
   }
 
   @Dependency(\.apiClient.getArticlesWithPage) var getArticlesWithPage
@@ -45,7 +47,35 @@ struct ArticlesListContentReducer {
       case .articleDetail:
         return .none
       case .reachLastArticles:
-        print("reachLastArticles")
+        if let nextPage = state.nextPage {
+          state.isLoadingNextPage = true
+          return .run { send in
+            do {
+              let articlesList = try await getArticlesWithPage(nextPage)
+              await send(.nextPageRequestResponse(.success(articlesList)))
+            } catch {
+              await send(.nextPageRequestResponse(.failure(error)))
+            }
+          }
+        } else {
+          return .none
+        }
+      case let .nextPageRequestResponse(result):
+        switch result {
+        case let .success(response):
+          state.articles.append(contentsOf: response.articles.map {
+            .init(
+              id: $0.id,
+              title: $0.title,
+              body: $0.body,
+              backgroundColor: $0.backgroundColor,
+              tags: $0.tags
+            )
+          })
+          state.nextPage = response.nextPage
+        case .failure:
+          break
+        }
         return .none
       }
     }

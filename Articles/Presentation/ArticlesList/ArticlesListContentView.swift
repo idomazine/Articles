@@ -12,13 +12,23 @@ struct ArticlesListContentView: View {
   @Bindable var store: StoreOf<ArticlesListContentReducer>
   
   var body: some View {
-    List(store.articles) { article in
-      ArticleListElementView(article: article) {
-        store.send(.didSelectArticle(id: article.id))
+    List {
+      ForEach(store.articles) { article in
+        ArticleListElementView(article: article) {
+          store.send(.didSelectArticle(id: article.id))
+        }
+        .onAppear {
+          if article == store.articles.last {
+            store.send(.reachLastArticles)
+          }
+        }
       }
-      .onAppear {
-        if article == store.articles.last {
-          store.send(.reachLastArticles)
+      .listRowSeparator(.hidden)
+      if store.isLoadingNextPage {
+        HStack {
+          Spacer()
+          ProgressView()
+          Spacer()
         }
       }
     }

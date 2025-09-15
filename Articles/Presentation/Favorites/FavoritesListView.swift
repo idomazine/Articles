@@ -26,6 +26,15 @@ struct FavoritesListView: View {
         }
       }
     }
+    .overlay {
+      if store.favorites.isEmpty {
+        ContentUnavailableView(
+          "お気に入りはありません",
+          systemImage: "star",
+          description: Text("記事をお気に入りに追加するとここに表示されます。"),
+        )
+      }
+    }
     .onAppear { store.send(.onAppear) }
     .navigationTitle("お気に入り")
     .navigationDestination(store: store.scope(state: \.$articleDetail,

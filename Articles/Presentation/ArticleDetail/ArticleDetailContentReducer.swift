@@ -10,6 +10,8 @@ import ComposableArchitecture
 
 @Reducer
 struct ArticleDetailContentReducer {
+  @Dependency(\.favoireRepository) var favoireRepository
+  
   @ObservableState
   struct State: Equatable, Sendable {
     var article: ArticleAPIResponse
@@ -25,8 +27,18 @@ struct ArticleDetailContentReducer {
     Reduce { state, action in
       switch action {
       case .onAppear:
+        state.isFavorite = (try? favoireRepository.getFavoriteById(state.article.id)) != nil
         return .none
       case .favoriteButtonTapped:
+        if state.isFavorite {
+          try! favoireRepository.removeFavoriteById(state.article.id)
+        } else {
+          try! favoireRepository.addFavorite(.init(
+            articleId: state.article.id,
+            title: state.article.title,
+            createdAt: Date()
+          ))
+        }
         state.isFavorite.toggle()
         return .none
       }

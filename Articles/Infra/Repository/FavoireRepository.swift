@@ -23,7 +23,7 @@ extension FavoireRepository: DependencyKey {
       getFavoriteById: { id in
         let context = try makeModelContext()
         var fetch = FetchDescriptor<Favorite>(
-          predicate: #Predicate { $0.id == id },
+          predicate: #Predicate { $0.articleId == id },
         )
         fetch.fetchLimit = 1
         
@@ -32,8 +32,9 @@ extension FavoireRepository: DependencyKey {
       addFavorite: { favorite in
         let context = try makeModelContext()
         
+        let targetId = favorite.articleId
         var fetch = FetchDescriptor<Favorite>(
-          predicate: #Predicate { $0.id == favorite.id },
+          predicate: #Predicate { $0.articleId == targetId }
         )
         fetch.fetchLimit = 1
         
@@ -42,18 +43,20 @@ extension FavoireRepository: DependencyKey {
         } else {
           context.insert(favorite)
         }
+        try context.save()
       },
       removeFavoriteById: { id in
         let context = try makeModelContext()
         
         var fetch = FetchDescriptor<Favorite>(
-          predicate: #Predicate { $0.id == id },
+          predicate: #Predicate { $0.articleId == id }
         )
         fetch.fetchLimit = 1
         
         if let existing = try context.fetch(fetch).first {
           context.delete(existing)
         }
+        try context.save()
       }
     )
   }()

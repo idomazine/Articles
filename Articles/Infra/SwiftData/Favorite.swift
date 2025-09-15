@@ -10,12 +10,12 @@ import SwiftData
 
 @Model
 final class Favorite {
-  @Attribute(.unique) var id: Int
+  @Attribute(.unique) var articleId: Int
   var title: String
   var createdAt: Date
   
-  init(id: Int, title: String, createdAt: Date) {
-    self.id = id
+  init(articleId: Int, title: String, createdAt: Date) {
+    self.articleId = articleId
     self.title = title
     self.createdAt = createdAt
   }

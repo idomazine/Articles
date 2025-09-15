@@ -41,7 +41,12 @@ struct ArticleDetailContentView: View {
               }
             }
           }
+          .padding(.horizontal)
         }
+        Text(store.article.body)
+          .font(.caption).bold()
+          .multilineTextAlignment(.center)
+          .padding()
       }
     }
     .onAppear {

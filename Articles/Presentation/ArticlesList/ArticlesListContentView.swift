@@ -16,6 +16,11 @@ struct ArticlesListContentView: View {
       ArticleListElementView(article: article) {
         store.send(.didSelectArticle(id: article.id))
       }
+      .onAppear {
+        if article == store.articles.last {
+          store.send(.reachLastArticles)
+        }
+      }
     }
     .listStyle(.plain)
     .onAppear { store.send(.onAppear) }

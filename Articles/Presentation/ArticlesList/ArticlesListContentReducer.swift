@@ -29,8 +29,11 @@ struct ArticlesListContentReducer {
     case onAppear
     case didSelectArticle(id: Int)
     case articleDetail(PresentationAction<ArticleDetailReducer.Action>)
+    case reachLastArticles
   }
-  
+
+  @Dependency(\.apiClient.getArticlesWithPage) var getArticlesWithPage
+
   var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
@@ -40,6 +43,9 @@ struct ArticlesListContentReducer {
         state.articleDetail = .init(id: id)
         return .none
       case .articleDetail:
+        return .none
+      case .reachLastArticles:
+        print("reachLastArticles")
         return .none
       }
     }

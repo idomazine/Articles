@@ -14,8 +14,8 @@ struct RootTabView: View {
   var body: some View {
     TabView(selection: $store.selectedTab.sending(\.selectTab)) {
       NavigationStack {
-        ArticlesListView(store: store.scope(state: \.articles,
-                                            action: \.articles))
+        ArticlesListView(store: store.scope(state: \.articlesList,
+                                            action: \.articlesList))
       }
       .tabItem {
         Label("ニュース", systemImage: "book.closed")

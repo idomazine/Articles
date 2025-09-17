@@ -11,15 +11,15 @@ import ComposableArchitecture
 @Reducer
 struct RootTabReducer {
   enum Tab: Equatable {
-    case books
+    case articlesList
     case favoritesList
     case profile
   }
   
   @ObservableState
   struct State {
-    var selectedTab: Tab = .books
-    var articles = ArticlesListReducer.State()
+    var selectedTab: Tab = .articlesList
+    var articlesList = ArticlesListReducer.State()
     var favoritesList = FavoritesListReducer.State()
     var profile = ProfileReducer.State()
   }
@@ -28,14 +28,14 @@ struct RootTabReducer {
   enum Action {
     case selectTab(Tab)
     case onOpenURL(URL)
-    case articles(ArticlesListReducer.Action)
+    case articlesList(ArticlesListReducer.Action)
     case favoritesList(FavoritesListReducer.Action)
     case profile(ProfileReducer.Action)
   }
   
   var body: some Reducer<State, Action> {
-    Scope(state: \.articles,
-          action: \.articles) {
+    Scope(state: \.articlesList,
+          action: \.articlesList) {
       ArticlesListReducer()
     }
     Scope(state: \.favoritesList,
@@ -52,8 +52,21 @@ struct RootTabReducer {
         state.selectedTab = selectedTab
         return .none
       case let .onOpenURL(url):
+        if let urlRoute = URLRoute(url: url) {
+          switch urlRoute {
+          case .articlesList:
+            state.selectedTab = .articlesList
+          case let .article(id):
+            // TODO: 個別記事への遷移
+            state.selectedTab = .articlesList
+          case .favoritesList:
+            state.selectedTab = .favoritesList
+          case .profile:
+            state.selectedTab = .profile
+          }
+        }
         return .none
-      case .articles:
+      case .articlesList:
         return .none
       case .favoritesList:
         return .none

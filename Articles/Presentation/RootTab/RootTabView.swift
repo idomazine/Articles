@@ -38,6 +38,9 @@ struct RootTabView: View {
       }
       .tag(RootTabReducer.Tab.profile)
     }
+    .onOpenURL { url in
+      store.send(.onOpenURL(url))
+    }
   }
 }
 

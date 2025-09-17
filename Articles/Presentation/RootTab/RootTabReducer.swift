@@ -27,6 +27,7 @@ struct RootTabReducer {
   @CasePathable
   enum Action {
     case selectTab(Tab)
+    case onOpenURL(URL)
     case articles(ArticlesListReducer.Action)
     case favoritesList(FavoritesListReducer.Action)
     case profile(ProfileReducer.Action)
@@ -49,6 +50,8 @@ struct RootTabReducer {
       switch action {
       case let .selectTab(selectedTab):
         state.selectedTab = selectedTab
+        return .none
+      case let .onOpenURL(url):
         return .none
       case .articles:
         return .none

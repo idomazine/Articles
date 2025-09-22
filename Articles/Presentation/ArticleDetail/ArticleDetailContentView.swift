@@ -48,6 +48,26 @@ struct ArticleDetailContentView: View {
           .multilineTextAlignment(.center)
           .padding()
       }
+      
+      Text("コメント(\(store.comments.count))")
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal)
+  
+      VStack(alignment: .leading, spacing: 3) {
+        ForEach(store.comments) { comment in
+          Text(comment.body)
+            .padding(.horizontal)
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .overlay {
+              RoundedRectangle(cornerRadius: 4)
+                .stroke(Color.gray, lineWidth: 1)
+            }
+            .padding(4)
+        }
+      }
+      
       Button {
         store.send(.commentButtonTapped)
       } label: {

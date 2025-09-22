@@ -42,8 +42,8 @@ extension DependencyValues {
 private func makeModelContext(configuration: ModelConfiguration) throws -> ModelContext {
   try ModelContext(ModelContainer(
     for:
-      Favorite.self
-    ,
+      Favorite.self,
+      Comment.self,
     configurations: configuration
   ))
 }

@@ -10,7 +10,7 @@ import SwiftData
 
 @Model
 final class Comment {
-  @Attribute(.unique) var articleId: Int
+  var articleId: Int
   var body: String
   var createdAt: Date
   

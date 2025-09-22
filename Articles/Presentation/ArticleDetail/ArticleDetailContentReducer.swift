@@ -11,14 +11,21 @@ import ComposableArchitecture
 @Reducer
 struct ArticleDetailContentReducer {
   @Dependency(\.favoriteRepository) var favoireRepository
+  @Dependency(\.commentRepository.getCommentByArticleId) var getCommentByArticleId
   @Dependency(\.date) var date
 
   @ObservableState
   struct State: Equatable, Sendable {
+    struct Comment: Equatable, Sendable, Identifiable {
+      let id: Int
+      var body: String
+    }
+    
     @Presents var postComment: PostCommentReducer.State?
 
     var article: ArticleAPIResponse
     var isFavorite: Bool = false
+    var comments: [Comment] = []
   }
   
   enum Action: Sendable {
@@ -33,6 +40,7 @@ struct ArticleDetailContentReducer {
       switch action {
       case .onAppear:
         state.isFavorite = (try? favoireRepository.getFavoriteById(state.article.id)) != nil
+        fetchComments(state: &state)
         return .none
       case .favoriteButtonTapped:
         if state.isFavorite {
@@ -49,12 +57,25 @@ struct ArticleDetailContentReducer {
       case .commentButtonTapped:
         state.postComment = .init(articleId: state.article.id)
         return .none
+      case .postComment(.presented(.postResponse(.success))):
+        fetchComments(state: &state)
+        return .none
       case .postComment:
         return .none
       }
     }
     .ifLet(\.$postComment, action: \.postComment) {
       PostCommentReducer()
+    }
+  }
+  
+  private func fetchComments(state: inout State) {
+    let comments = try? getCommentByArticleId(state.article.id).map {
+      State.Comment(id: $0.id.hashValue,
+                    body: $0.body)
+    }
+    if let comments {
+      state.comments = comments
     }
   }
 }

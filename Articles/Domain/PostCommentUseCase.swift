@@ -20,8 +20,16 @@ extension PostCommentUseCase: DependencyKey {
     
     return .init(
       postComment: { (articleId: Int, body: String) in
-        try await postCommentToApi((articleId: articleId, body: body))
-        var comment = Comment(articleId: articleId, body: body, createdAt: date.now)
+        let trimmedBody = body.trimmingCharacters(in: .whitespacesAndNewlines)
+        try await postCommentToApi((
+          articleId: articleId,
+          body: trimmedBody
+        ))
+        var comment = Comment(
+          articleId: articleId,
+          body: trimmedBody,
+          createdAt: date.now
+        )
         try addComment(comment)
       }
     )

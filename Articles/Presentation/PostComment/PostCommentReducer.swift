@@ -26,7 +26,7 @@ struct PostCommentReducer {
     case binding(BindingAction<State>)
     case cancelButtonTapped
     case postButtonTapped
-    case _postResponse(Result<Void, Error>)
+    case postResponse(Result<Void, Error>)
     case alert(PresentationAction<Alert>)
     case delegate(Delegate)
     
@@ -66,12 +66,12 @@ struct PostCommentReducer {
         let articleId = state.articleId
         let body = state.bodyText
         return .run { send in
-          await send(._postResponse(Result {
+          await send(.postResponse(Result {
             try await postCommentUseCase(articleId: articleId, body: body)
           }))
         }
         
-      case let ._postResponse(result):
+      case let .postResponse(result):
         state.isPosting = false
         switch result {
         case .success:

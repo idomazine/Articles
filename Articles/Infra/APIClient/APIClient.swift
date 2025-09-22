@@ -26,26 +26,31 @@ enum GetArticleDetailError: Error {
 }
 
 struct APIClient: Sendable {
-  init() {}
+  var getArticlesWithPage: @Sendable (Int?) async throws -> ArticlesListAPIResponse
   
-  var getArticlesWithPage: @Sendable (Int?) async throws -> ArticlesListAPIResponse = { page in
-    await SecondsTimer().wait(seconds: 1)
-    let page = page ?? 0
-    let pageSplited = ArticleAPIResponse.sampleList.split(subSize: 10)
-    guard pageSplited.count >= page else { return .init(articles: [], nextPage: nil) }
-    let nextPage = page + 1 < pageSplited.count ? page + 1 : nil
-    return .init(articles: pageSplited[page], nextPage: nextPage)
-  }
-  
-  var getArticleWithId: @Sendable (Int) async throws -> ArticleAPIResponse = { id in
-    await SecondsTimer().wait(seconds: 1)
-    guard let article = ArticleAPIResponse.sampleList.first(where: { $0.id == id }) else { throw GetArticleDetailError.notFound }
-    return article
-  }
+  var getArticleWithId: @Sendable (Int) async throws -> ArticleAPIResponse
 }
 
 extension APIClient: DependencyKey {
-  static let liveValue = APIClient()
+  static let liveValue: APIClient = {
+    @Dependency(\.continuousClock) var clock
+
+    return .init(
+      getArticlesWithPage: { page in
+        try await clock.sleep(for: .seconds(1))
+        let page = page ?? 0
+        let pageSplited = ArticleAPIResponse.sampleList.split(subSize: 10)
+        guard pageSplited.count >= page else { return .init(articles: [], nextPage: nil) }
+        let nextPage = page + 1 < pageSplited.count ? page + 1 : nil
+        return .init(articles: pageSplited[page], nextPage: nextPage)
+      },
+      getArticleWithId: { id in
+        try await clock.sleep(for: .seconds(1))
+        guard let article = ArticleAPIResponse.sampleList.first(where: { $0.id == id }) else { throw GetArticleDetailError.notFound }
+        return article
+      }
+    )
+  }()
   
   static var testValue: APIClient { liveValue }
 }

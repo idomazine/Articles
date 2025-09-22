@@ -57,8 +57,8 @@ struct RootTabReducer {
           case .articlesList:
             state.selectedTab = .articlesList
           case let .article(id):
-            // TODO: 個別記事への遷移
             state.selectedTab = .articlesList
+            state.articlesList.loadableContent.content?.articleDetail = .init(id: id)
           case .favoritesList:
             state.selectedTab = .favoritesList
           case .profile:

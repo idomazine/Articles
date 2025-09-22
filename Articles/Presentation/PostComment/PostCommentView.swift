@@ -21,7 +21,6 @@ struct PostCommentView: View {
           .overlay(
             RoundedRectangle(cornerRadius: 8).stroke(.quaternary)
           )
-          .disabled(store.isPosting)
         
         Spacer(minLength: 0)
       }
@@ -37,6 +36,7 @@ struct PostCommentView: View {
             .disabled(store.isPosting || store.bodyText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
       }
+      .disabled(store.isPosting)
       .overlay {
         if store.isPosting {
           ZStack {
@@ -47,5 +47,6 @@ struct PostCommentView: View {
       }
     }
     .alert($store.scope(state: \.alert, action: \.alert))
+    .interactiveDismissDisabled(store.isPosting)
   }
 }

@@ -14,7 +14,11 @@ final class Favorite {
   var title: String
   var createdAt: Date
   
-  init(articleId: Int, title: String, createdAt: Date) {
+  init(
+    articleId: Int,
+    title: String,
+    createdAt: Date
+  ) {
     self.articleId = articleId
     self.title = title
     self.createdAt = createdAt

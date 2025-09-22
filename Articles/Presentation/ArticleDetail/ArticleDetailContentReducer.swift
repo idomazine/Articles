@@ -19,6 +19,7 @@ struct ArticleDetailContentReducer {
     struct Comment: Equatable, Sendable, Identifiable {
       let id: Int
       var body: String
+      var createdAt: Date
     }
     
     @Presents var postComment: PostCommentReducer.State?
@@ -71,8 +72,11 @@ struct ArticleDetailContentReducer {
   
   private func fetchComments(state: inout State) {
     let comments = try? getCommentByArticleId(state.article.id).map {
-      State.Comment(id: $0.id.hashValue,
-                    body: $0.body)
+      State.Comment(
+        id: $0.id.hashValue,
+        body: $0.body,
+        createdAt: $0.createdAt
+      )
     }
     if let comments {
       state.comments = comments

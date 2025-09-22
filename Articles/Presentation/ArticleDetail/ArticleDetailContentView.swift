@@ -50,21 +50,22 @@ struct ArticleDetailContentView: View {
       }
       
       Text("コメント(\(store.comments.count))")
+        .font(.subheadline)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal)
   
       VStack(alignment: .leading, spacing: 3) {
         ForEach(store.comments) { comment in
-          Text(comment.body)
-            .padding(.horizontal)
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .overlay {
-              RoundedRectangle(cornerRadius: 4)
-                .stroke(Color.gray, lineWidth: 1)
-            }
-            .padding(4)
+          HStack(alignment: .bottom, spacing: 4) {
+            Text(comment.body)
+              .font(.caption)
+              .foregroundStyle(.secondary)
+              .frame(maxWidth: .infinity, alignment: .leading)
+            Text(comment.createdAt, format: .relative(presentation: .named))
+              .font(.caption2)
+              .fontWeight(.light)
+          }
+          .padding(.horizontal)
         }
       }
       

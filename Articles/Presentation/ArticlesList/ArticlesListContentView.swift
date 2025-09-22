@@ -28,6 +28,7 @@ struct ArticlesListContentView: View {
         HStack {
           Spacer()
           ProgressView()
+            .id(UUID())
           Spacer()
         }
       }

@@ -15,13 +15,17 @@ struct ArticleDetailContentReducer {
 
   @ObservableState
   struct State: Equatable, Sendable {
+    @Presents var postComment: PostCommentReducer.State?
+
     var article: ArticleAPIResponse
     var isFavorite: Bool = false
   }
   
-  enum Action: Sendable, Equatable {
+  enum Action: Sendable {
+    case postComment(PresentationAction<PostCommentReducer.Action>)
     case onAppear
     case favoriteButtonTapped
+    case commentButtonTapped
   }
   
   var body: some ReducerOf<Self> {
@@ -42,7 +46,15 @@ struct ArticleDetailContentReducer {
         }
         state.isFavorite.toggle()
         return .none
+      case .commentButtonTapped:
+        state.postComment = .init(articleId: state.article.id)
+        return .none
+      case .postComment:
+        return .none
       }
+    }
+    .ifLet(\.$postComment, action: \.postComment) {
+      PostCommentReducer()
     }
   }
 }

@@ -49,7 +49,7 @@ struct ArticleDetailContentView: View {
           .padding()
       }
       Button {
-        print("comment")
+        store.send(.commentButtonTapped)
       } label: {
         Text("コメントをする")
       }
@@ -65,6 +65,11 @@ struct ArticleDetailContentView: View {
           Image(systemName: store.isFavorite ? "star.fill" : "star")
         }
       }
+    }
+    .sheet(
+      store: store.scope(state: \.$postComment, action: \.postComment)
+    ) { store in
+      PostCommentView(store: store)
     }
   }
 }

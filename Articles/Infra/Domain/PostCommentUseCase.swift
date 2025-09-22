@@ -28,6 +28,12 @@ extension PostCommentUseCase: DependencyKey {
   static var testValue: PostCommentUseCase { liveValue }
 }
 
+extension PostCommentUseCase {
+  func callAsFunction(articleId: Int, body: String) async throws {
+    try await postComment((articleId: articleId, body: body))
+  }
+}
+
 extension DependencyValues {
   var postCommentUseCase: PostCommentUseCase {
     get { self[PostCommentUseCase.self] }

@@ -11,7 +11,8 @@ import ComposableArchitecture
 @Reducer
 struct ArticleDetailContentReducer {
   @Dependency(\.favoriteRepository) var favoireRepository
-  
+  @Dependency(\.date) var date
+
   @ObservableState
   struct State: Equatable, Sendable {
     var article: ArticleAPIResponse
@@ -36,7 +37,7 @@ struct ArticleDetailContentReducer {
           try! favoireRepository.addFavorite(.init(
             articleId: state.article.id,
             title: state.article.title,
-            createdAt: Date()
+            createdAt: date.now
           ))
         }
         state.isFavorite.toggle()

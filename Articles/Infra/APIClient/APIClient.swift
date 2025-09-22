@@ -29,6 +29,8 @@ struct APIClient: Sendable {
   var getArticlesWithPage: @Sendable (Int?) async throws -> ArticlesListAPIResponse
   
   var getArticleWithId: @Sendable (Int) async throws -> ArticleAPIResponse
+  
+  var postComment: @Sendable ((articleId: Int, body: String)) async throws -> Void
 }
 
 extension APIClient: DependencyKey {
@@ -48,6 +50,10 @@ extension APIClient: DependencyKey {
         try await clock.sleep(for: .seconds(1))
         guard let article = ArticleAPIResponse.sampleList.first(where: { $0.id == id }) else { throw GetArticleDetailError.notFound }
         return article
+      },
+      postComment: { _, _ in
+        // 仮にサーバへのコメント投稿を模している
+        try await clock.sleep(for: .seconds(1))
       }
     )
   }()

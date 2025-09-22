@@ -30,18 +30,7 @@ extension CommentRepository: DependencyKey {
       },
       addComment: { comment in
         let context = try makeModelContext()
-        
-        let targetId = comment.articleId
-        var fetch = FetchDescriptor<Comment>(
-          predicate: #Predicate { $0.articleId == targetId }
-        )
-        fetch.fetchLimit = 1
-        
-        if let existing = try context.fetch(fetch).first {
-          context.delete(existing)
-        } else {
-          context.insert(comment)
-        }
+        context.insert(comment)
         try context.save()
       }
     )

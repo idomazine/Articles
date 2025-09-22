@@ -15,10 +15,12 @@ struct PostCommentUseCase {
 extension PostCommentUseCase: DependencyKey {
   static let liveValue: PostCommentUseCase = {
     @Dependency(\.commentRepository.addComment) var addComment
+    @Dependency(\.apiClient.postComment) var postCommentToApi
     @Dependency(\.date) var date
     
     return .init(
       postComment: { (articleId: Int, body: String) in
+        try await postCommentToApi((articleId: articleId, body: body))
         var comment = Comment(articleId: articleId, body: body, createdAt: date.now)
         try addComment(comment)
       }

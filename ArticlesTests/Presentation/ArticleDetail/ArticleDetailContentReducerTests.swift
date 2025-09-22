@@ -19,6 +19,8 @@ struct ArticleDetailContentReducerTests {
   func favorite_tap_toggle() async {
     let store = TestStore(initialState: ArticleDetailContentReducer.State(article: .sample)) {
       ArticleDetailContentReducer()
+    } withDependencies: {
+      $0.date.now = Date.makeSample("2025/09/23 00:00:00")
     }
     
     await store.send(.onAppear) 
@@ -47,6 +49,7 @@ struct ArticleDetailContentReducerTests {
       ArticleDetailContentReducer()
     } withDependencies: {
       $0.favoriteRepository = favoriteRepository
+      $0.date.now = Date.makeSample("2025/09/23 00:00:00")
     }
     
     await store.send(.onAppear) { state in

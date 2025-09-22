@@ -48,6 +48,11 @@ struct ArticleDetailContentView: View {
           .multilineTextAlignment(.center)
           .padding()
       }
+      Button {
+        print("comment")
+      } label: {
+        Text("コメントをする")
+      }
     }
     .onAppear {
       store.send(.onAppear)

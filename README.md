@@ -2,6 +2,8 @@
 
 このリポジトリは、iOSのニュースアプリを模したプロジェクトです。架空ニュースの一覧・閲覧・ブックマーク・コメント投稿に対応し、TCA を用いた状態管理と Layered Architecture を実践しています。
 
+<img width="320" src="https://github.com/user-attachments/assets/49f9cff2-a4d1-4303-91d1-9f9b426f348b" />
+
 ## 環境
 - **OS**: macOS Tahoe 26.0
 - Xcode: 26.0
@@ -61,3 +63,21 @@ URLスキームによる画面遷移をサポートしています。
 - `articles://favorites`: お気に入り一覧
 - `articles://profile`: プロフィール
 
+## キャプチャ
+
+### お気に入り
+各ニュースをお気に入りに追加すると、お気に入り一覧で表示されます。
+お気に入りを解除すると一覧からも削除されます。
+
+<video src="https://github.com/user-attachments/assets/96770351-cd38-4bb3-8d1e-7e0b44a80fe8"></video>
+
+### コメント
+各ニュースはコメント追加が可能です。
+API通信を模していますが、投稿したコメントはSwiftDataで保存しています。
+
+<video src="https://github.com/user-attachments/assets/9fdb2e5a-98f5-4a10-8c94-a9376ea71021"></video>
+
+### 無限スクロール
+ニュース一覧を一番下までスクロールすると、次のページの読み込みを開始します。
+
+<video src="https://github.com/user-attachments/assets/b80eba57-8d5f-4d69-8434-ff46d00ff75c"></video>

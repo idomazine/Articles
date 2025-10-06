@@ -20,6 +20,8 @@ struct RootTabView: View {
       .tabItem {
         Label("ニュース", systemImage: "book.closed")
       }
+      .tag(RootTabReducer.Tab.articlesList)
+      
       NavigationStack {
         FavoritesListView(store: store.scope(state: \.favoritesList,
                                              action: \.favoritesList))
